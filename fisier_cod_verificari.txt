@@ -1,0 +1,386 @@
+/*
+    1.Pion pozitie initiala
+      alb
+    printf("1. Pion in pozitie initiala\n");
+    printf("alb\n");
+    if(validare_miscare_pion(board, 0, 6, 0, 5, 'A', -1, -1, -1, -1) == true) {
+        printf("o patratica in fata functioneaza\n");
+    }else {
+        printf("nu functioneaza o patratica in fata functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 0, 6, 0, 4, 'A', -1, -1, -1, -1) == true) {
+        printf("2 patratele in fata functioneaza\n");
+    }else {
+        printf("nu functioneaza 2 patratele in fata functioneaza\n");
+    }
+    
+    if(validare_miscare_pion(board, 5, 6, 6, 5, 'A', -1, -1, -1, -1) == true) {
+        printf("luatul pe diagonala dreapta functioneaza\n");
+    }else {
+        printf("nu functioneaza luarea in diagonala dreapta\n");
+    }
+
+    if(validare_miscare_pion(board, 7, 6, 6, 5, 'A', -1, -1, -1, -1) == true) {
+        printf("luatul pe diagonala stanga functioneaza\n");
+    }else {
+        printf("nu functioneaza luarea in stanga dreapta\n");
+    }
+
+    //negru
+    printf("negru\n");
+    if(validare_miscare_pion(board, 7, 1, 7, 2, 'N', -1, -1, -1, -1) == true) {
+        printf("o patratica in fata functioneaza\n");
+    }else {
+        printf("nu functioneaza o patratica in fata functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 7, 1, 7, 3, 'N', -1, -1, -1, -1) == true) {
+        printf("2 patratele in fata functioneaza\n");
+    }else {
+        printf("nu functioneaza 2 patratele in fata functioneaza\n");
+    }
+    
+    if(validare_miscare_pion(board, 2, 1, 3, 2, 'N', -1, -1, -1, -1) == true) {
+        printf("luatul pe diagonala dreapta functioneaza\n");
+    }else {
+        printf("nu functioneaza luarea in diagonala dreapta\n");
+    }
+
+    if(validare_miscare_pion(board, 2, 1, 1, 2, 'N', -1, -1, -1, -1) == true) {
+        printf("luatul pe diagonala stanga functioneaza\n");
+    }else {
+        printf("nu functioneaza luarea in stanga dreapta\n");
+    }
+
+    //2. Pion in poz normala
+    //alb
+    printf("2. Pion in pozitie initiala\n");
+    printf("Alb\n");
+    if(validare_miscare_pion(board, 6, 3, 6, 2, 'A', -1, -1, -1, -1) == true) {
+        printf("o patratica inainte functioneaza\n");
+    }else {
+        printf("o patratica inainte nu functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 3, 3, 2, 2, 'A', -1, -1, -1, -1) == true) {
+        printf("luarea de pion pe diagonala stanga functioneaza\n");
+    }else {
+        printf("luarea de pion pe diagonala stanga nu functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 3, 3, 4, 2, 'A', -1, -1, -1, -1) == true) {
+        printf("luarea de pion pe diagonala dreapta functioneaza\n");
+    }else {
+        printf("luarea de pion pe diagonala stanga nu functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 6, 3, 5, 2, 'A', 5, 1, 5, 3) == true) {
+        printf("en-passant stanga functioneaza\n");
+    }else {
+        printf("en-passant stanga nu functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 6, 3, 7, 2, 'A', 7, 1, 7, 3) == true) {
+        printf("en-passant dreapta functioneaza\n");
+    }else {
+        printf("en-passant dreapta nu functioneaza\n");
+    }
+
+    printf("Negru\n");
+    if(validare_miscare_pion(board, 7, 1, 7, 2, 'N', -1, -1, -1, -1) == true) {
+        printf("o patratica inainte functioneaza\n");
+    }else {
+        printf("o patratica inainte nu functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 2, 2, 1, 3, 'N', -1, -1, -1, -1) == true) {
+        printf("luarea de pion pe diagonala stanga functioneaza\n");
+    }else {
+        printf("luarea de pion pe diagonala stanga nu functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 2, 2, 3, 3, 'N', -1, -1, -1, -1) == true) {
+        printf("luarea de pion pe diagonala dreapta functioneaza\n");
+    }else {
+        printf("luarea de pion pe diagonala dreapta nu functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 6, 4, 5, 5, 'N', 5, 6, 5, 4) == true) {
+        printf("en-passant stanga functioneaza\n");
+    }else {
+        printf("en-passant stanga nu functioneaza\n");
+    }
+
+    if(validare_miscare_pion(board, 6, 4, 7, 5, 'N', 7, 6, 7, 4) == true) {
+        printf("en-passant dreapta functioneaza\n");
+    }else {
+        printf("en-passant dreapta nu functioneaza\n");
+    }
+    3. Tura
+    alb
+    printf("Alb\n");
+    if(validare_miscare_tura(board, 3, 4, 3, 0, 'A')) {
+        printf("miscarea in sus functioneaza\n");
+    }else {
+        printf("miscarea in sus nu functioneaza\n");
+    }
+
+    if(validare_miscare_tura(board, 3, 4, 3, 7, 'A')) {
+        printf("miscarea in jos functioneaza\n");
+    }else {
+        printf("miscarea in jos nu functioneaza\n");
+    }
+
+    if(validare_miscare_tura(board, 3, 4, 0, 4, 'A')) {
+        printf("miscarea in stanga functioneaza\n");
+    }else {
+        printf("miscarea in stanga nu functioneaza\n");
+    }
+
+    if(validare_miscare_tura(board, 3, 4, 7, 4, 'A')) {
+        printf("miscarea in dreapta functioneaza\n");
+    }else {
+        printf("miscarea in dreapta nu functioneaza\n");
+    }
+
+    //negru
+    printf("negru\n");
+    if(validare_miscare_tura(board, 4, 3, 4, 0, 'N')) {
+        printf("miscarea in sus functioneaza\n");
+    }else {
+        printf("miscarea in sus nu functioneaza\n");
+    }
+
+    if(validare_miscare_tura(board, 4, 3, 4, 7, 'N')) {
+        printf("miscarea in jos functioneaza\n");
+    }else {
+        printf("miscarea in jos nu functioneaza\n");
+    }
+
+    if(validare_miscare_tura(board, 4, 3, 0, 3, 'N')) {
+        printf("miscarea in stanga functioneaza\n");
+    }else {
+        printf("miscarea in stanga nu functioneaza\n");
+    }
+
+    if(validare_miscare_tura(board, 4, 3, 7, 3, 'N')) {
+        printf("miscarea in dreapta functioneaza\n");
+    }else {
+        printf("miscarea in dreapta nu functioneaza\n");
+    }
+
+    4. Cal
+    Alb
+    
+    printf("Alb\n");
+    if(validare_miscare_cal(board, 2, 2, 1, 4, 'A')) {
+        printf("jos stanga pe nebun negru a mers\n");
+    }else {
+        printf("jos stanga pe nebun negru nu a mers\n");
+    }
+
+    if(validare_miscare_cal(board, 2, 2, 3, 4, 'A')) {
+        printf("jos dreapta pe pion alb a mers\n");
+    }else {
+        printf("jos dreapta pe pion alb nu a mers\n");
+    }
+
+    if(validare_miscare_cal(board, 2, 2, 4, 1, 'A')) {
+        printf("dreapta sus pe pion negru a mers\n");
+    }else {
+        printf("dreapta sus pe pion negru nu a mers\n");
+    }
+
+    if(validare_miscare_cal(board, 2, 2, 4, 3, 'A')) {
+        printf("dreapta jos pe pion alb a mers\n");
+    }else {
+        printf("dreapta jos pe pion alb nu a mers\n");
+    }
+
+    printf("Negru\n");
+
+    if(validare_miscare_cal(board, 2, 5, 3, 3, 'N')) {
+        printf("sus dreapta pe tura alba mers\n");
+    }else {
+        printf("sus dreapta pe tura nu a mers\n");
+    }
+
+    if(validare_miscare_cal(board, 2, 5, 1, 3, 'N')) {
+        printf("sus stanga pe regina neagra a mers\n");
+    }else {
+        printf("sus stanga pe regina nu a mers\n");
+    }
+
+    if(validare_miscare_cal(board, 2, 5, 4, 4, 'N')) {
+        printf("dreapta sus pe pion negru a mers\n");
+    }else {
+        printf("dreapta sus pe pion negru nu a mers\n");
+    }
+
+    if(validare_miscare_cal(board, 2, 5, 4, 6, 'N')) {
+        printf("dreapta jos pe pion alb a mers\n");
+    }else {
+        printf("dreapta jos pe pion alb nu a mers\n");
+    }
+
+    
+    5. Nebun
+    alb
+
+    printf("Alb\n");
+    if(validare_miscare_nebun(board, 3, 4, 0, 1, 'A') == true) {
+        printf("miscare pe diagonala stanga sus si luarea calului negru merge\n");
+    }else {
+        printf("miscare pe diagonala stanga sus si luarea calului negru nu merge\n");
+    }
+
+    if(validare_miscare_nebun(board, 3, 4, 7, 0, 'A') == true) {
+        printf("miscare pe diagonala dreapta sus si trecerea peste pionul negru merge\n");
+    }else {
+        printf("miscare pe diagonala dreapta sus si trecerea peste pionul negru nu merge\n");
+    }
+
+    if(validare_miscare_nebun(board, 3, 4, 0, 7, 'A') == true) {
+        printf("miscare pe diagonala stanga jos merge\n");
+    }else {
+        printf("miscare pe diagonala stanga jos\n");
+    }
+
+    if(validare_miscare_nebun(board, 3, 4, 5, 6, 'A') == true) {
+        printf("miscare pe diagonala dreapta jos si luarea peste pionul alb merge\n");
+    }else {
+        printf("miscare pe diagonala dreapta jos si luarea peste pionul alb nu merge\n");
+    }
+
+    printf("Negru\n");
+    if(validare_miscare_nebun(board, 3, 3, 0, 0, 'N') == true) {
+        printf("miscare pe diagonala stanga sus si luarea calului alb merge\n");
+    }else {
+        printf("miscare pe diagonala stanga sus si luarea calului alb nu merge\n");
+    }
+
+    if(validare_miscare_nebun(board, 3, 3, 6, 0, 'N') == true) {
+        printf("miscare pe diagonala dreapta sus si trecerea peste pionul alb merge\n");
+    }else {
+        printf("miscare pe diagonala dreapta sus si trecerea peste pionul alb nu merge\n");
+    }
+
+    if(validare_miscare_nebun(board, 3, 3, 0, 6, 'N') == true) {
+        printf("miscare pe diagonala stanga jos merge\n");
+    }else {
+        printf("miscare pe diagonala stanga jos\n");
+    }
+
+    if(validare_miscare_nebun(board, 3, 3, 7, 7, 'N') == true) {
+        printf("miscare pe diagonala dreapta jos si trecerea peste calul negru merge\n");
+    }else {
+        printf("miscare pe diagonala dreapta jos si trecerea peste calul negru nu merge\n");
+    }
+
+    
+
+    7. Rege
+    alb
+    
+    printf("Alb\n");
+    if(validare_micare_rege(board, 1, 4, 2, 3, 'A')) {
+        printf("Miscare in dreapta sus peste pion alb merge\n");
+    }else {
+        printf("Miscare in dreapta sus peste pion alb nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 1, 4, 1, 3, 'A')) {
+        printf("Miscare in sus merge\n");
+    }else {
+        printf("Miscare in sus nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 1, 4, 0, 3, 'A')) {
+        printf("Miscare in stanga sus merge\n");
+    }else {
+        printf("Miscare in stanga sus nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 1, 4, 0, 4, 'A')) {
+        printf("Miscare in stanga merge\n");
+    }else {
+        printf("Miscare in stanga nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 1, 4, 0, 5, 'A')) {
+        printf("Miscare in stanga jos merge\n");
+    }else {
+        printf("Miscare in stanga jos merge\n");
+    }
+
+    if(validare_micare_rege(board, 1, 4, 1, 5, 'A')) {
+        printf("Miscare in jos si luarea pionului negru merge\n");
+    }else {
+        printf("Miscare in jos si luarea pionului negru nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 1, 4, 2, 5, 'A')) {
+        printf("Miscare in dreapta jos merge\n");
+    }else {
+        printf("Miscare in dreapta jos nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 1, 4, 2, 4, 'A')) {
+        printf("Miscare in dreapta merge\n");
+    }else {
+        printf("Miscare in dreapta nu merge\n");
+    }
+
+    negru
+    
+    printf("Negru\n");
+    if(validare_micare_rege(board, 5, 4, 6, 3, 'N')) {
+        printf("Miscare in dreapta sus merge\n");
+    }else {
+        printf("Miscare in dreapta sus nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 5, 4, 5, 3, 'N')) {
+        printf("Miscare in sus merge\n");
+    }else {
+        printf("Miscare in sus nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 5, 4, 4, 3, 'N')) {
+        printf("Miscare in stanga sus peste cal negru merge\n");
+    }else {
+        printf("Miscare in stanga sus peste cal negru nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 5, 4, 4, 4, 'N')) {
+        printf("Miscare in stanga merge\n");
+    }else {
+        printf("Miscare in stanga nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 5, 4, 4, 5, 'N')) {
+        printf("Miscare in stanga jos merge\n");
+    }else {
+        printf("Miscare in stanga jos merge\n");
+    }
+
+    if(validare_micare_rege(board, 5, 4, 5, 5, 'N')) {
+        printf("Miscare in jos si luarea pionului alb merge\n");
+    }else {
+        printf("Miscare in jos si luarea pionului alb nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 5, 4, 6, 5, 'N')) {
+        printf("Miscare in dreapta jos merge\n");
+    }else {
+        printf("Miscare in dreapta jos nu merge\n");
+    }
+
+    if(validare_micare_rege(board, 5, 4, 6, 4, 'N')) {
+        printf("Miscare in dreapta merge\n");
+    }else {
+        printf("Miscare in dreapta nu merge\n");
+    }
+
+*/
