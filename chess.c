@@ -4,6 +4,15 @@
 #include <string.h>
 #include "chess.h"
 
+bool selectare_valida(int** table, int selected_x, int selected_y, char culoare){
+    if(table[selected_y][selected_x] == 7 || table[selected_y][selected_x] == 8 || 
+        (table[selected_y][selected_x] >= 1 && table[selected_y][selected_x] <= 6 && culoare == 'A') || 
+        (table[selected_y][selected_x] >= -6 && table[selected_y][selected_x] <= -1 && culoare == 'N')) {
+            return false;
+    }
+    return true;
+}
+
 char identifica_piesa(int** table, int x, int y) {
     switch (table[y][x])
     {

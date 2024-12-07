@@ -12,6 +12,7 @@
 #include <sys/select.h>  // Pentru fd_set, FD_* macros și select()
 #include <unistd.h>      // Pentru STDIN_FILENO, read(), write()
 #include <sys/time.h>    // Pentru struct timeval
+#include <interfata_grafica.h>
 
 /* codul de eroare returnat de anumite apeluri */
 extern int errno;

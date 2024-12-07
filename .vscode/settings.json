@@ -1,6 +1,13 @@
 {
     "files.associations": {
         "stdio.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "inet.h": "c",
+        "sdl.h": "c",
+        "stdbool.h": "c",
+        "interfata_grafica.h": "c",
+        "stdlib.h": "c",
+        "types.h": "c",
+        "chess.h": "c"
     }
 }

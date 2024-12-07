@@ -113,11 +113,23 @@ static void *handle_pair(void *a) {
     ClientPair *pair = (ClientPair *)a;
     int client1 = pair->client1;
     int client2 = pair->client2;
+    
     char buffer[BUFFER_SIZE];
 
     printf("[pair %d] Pereche creată: client1=%d, client2=%d\n", pair->idPair, client1, client2);
 
+    int count = 0;
+
     while (1) {
+        if(count == 0) {
+            if(write(client1, 'A', 1) == -1) {
+                perror("Eroare transmitere culoare client1\n");
+            }else count++;
+        }else if(count == 1) {
+            if(write(client1, 'N', 1) == -1) {
+                perror("Eroare transmitere culoare client2\n");
+            }
+        }
         // Citim mesaj de la client1
         ssize_t bytesRead = read(client1, buffer, BUFFER_SIZE);
         if (bytesRead <= 0) {

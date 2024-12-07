@@ -1,4 +1,5 @@
 #include "chess.h"
+#include "interfata_grafica.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
@@ -126,7 +127,7 @@ void update_board_graphic(SDL_Renderer *renderer, int** table, SDL_Texture *text
 }
 
 */
-void play_game(SDL_Renderer *renderer, int** table, SDL_Texture *textures[]) {
+void play_game(SDL_Renderer *renderer, int** table, SDL_Texture *textures[], char culoare, int sd) {
     bool running = true;
     SDL_Event event;
 
@@ -158,13 +159,6 @@ void play_game(SDL_Renderer *renderer, int** table, SDL_Texture *textures[]) {
                     printf("selected_x : %d\n", selected_x);
                     printf("selected_y : %d\n", selected_y);
                     //verificam daca ce am selectat e o piesa valida
-                    if(table[selected_y][selected_x] != 7 && table[selected_y][selected_x] != 8) {
-                        printf("Ai selectat o piesa valida\n");
-                    }else {
-                        selected_x = -1;
-                        selected_y = -1;
-                        printf("Ai selectat o piesa invalida\n");
-                    }
                 } else {
                     //muta piesa
                     to_x = board_x;
@@ -197,57 +191,4 @@ void play_game(SDL_Renderer *renderer, int** table, SDL_Texture *textures[]) {
             }
         }
     }
-}
-
-
-int main() {
-    int** board = create_chess_board();
-    SDL_Init(SDL_INIT_VIDEO);
-    IMG_Init(IMG_INIT_PNG); // Inițializează suportul pentru imagini PNG
-
-    SDL_Window *window = SDL_CreateWindow("Chess Board",
-                                          SDL_WINDOWPOS_CENTERED,
-                                          SDL_WINDOWPOS_CENTERED,
-                                          WINDOW_WIDTH, WINDOW_HEIGHT,
-                                          SDL_WINDOW_SHOWN);
-
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-    SDL_Texture *pion_alb = IMG_LoadTexture(renderer, "assets/pion_alb.png");
-    SDL_Texture *pion_negru = IMG_LoadTexture(renderer, "assets/pion_negru.png");
-    SDL_Texture *tura_alba = IMG_LoadTexture(renderer, "assets/tura_alba.png");
-    SDL_Texture *tura_neagra = IMG_LoadTexture(renderer, "assets/tura_neagra.png");
-    SDL_Texture *nebun_alb = IMG_LoadTexture(renderer, "assets/nebun_alb.png");
-    SDL_Texture *nebun_negru = IMG_LoadTexture(renderer, "assets/nebun_negru.png");
-    SDL_Texture *cal_alb = IMG_LoadTexture(renderer, "assets/cal_alb.png");
-    SDL_Texture *cal_negru = IMG_LoadTexture(renderer, "assets/cal_negru.png");
-    SDL_Texture *regina_alba = IMG_LoadTexture(renderer, "assets/regina_alba.png");
-    SDL_Texture *regina_neagra = IMG_LoadTexture(renderer, "assets/regina_neagra.png");
-    SDL_Texture *rege_alb = IMG_LoadTexture(renderer, "assets/rege_alb.png");
-    SDL_Texture *rege_negru = IMG_LoadTexture(renderer, "assets/rege_negru.png");
-
-    SDL_Texture *textures[] = 
-    {pion_alb, pion_negru, tura_alba, tura_neagra, nebun_alb, nebun_negru, cal_alb, cal_negru,
-        regina_alba, regina_neagra, rege_alb, rege_negru};
-
-    for(int i = 0; i<12; i++) {
-        if(!textures[i]) {
-            printf("Eroare texturi: %s\n", IMG_GetError());
-        }
-    }
-
-    play_game(renderer, board, textures);
-
-    // Curăță resursele
-    for (int i = 0; i < 12; i++) {
-        SDL_DestroyTexture(textures[i]);
-    }
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-
-    IMG_Quit();
-    SDL_Quit();
-    free_chess_board(board);
-    return 0;
 }
