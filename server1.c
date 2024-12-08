@@ -20,8 +20,6 @@ typedef struct {
     int client1; // socket pentru primul client
     int client2; // socket pentru al doilea client
     int idPair;  // ID-ul perechii
-    sem_t sem_client1; //semafor pt clientul 1
-    sem_t sem_client2;  //semafor pt clientul 2
 } ClientPair;
 
 ClientPair pairs[MAX_CLIENTS / 2]; // Perechile de clienți
@@ -55,8 +53,6 @@ int main() {
         pthread_mutex_lock(&pair_lock);
         if (pair_count % 2 == 0) {
             pairs[pair_count / 2].client1 = client;
-            sem_init(&pairs[pair_count / 2].sem_client1, 0, 1); //semafor activ pentru clientul 1
-            sem_init(&pairs[pair_count / 2].sem_client2, 0, 0); //semafor inactiv pt clientul 2 ca inca nu e conectat
         } else {
             pairs[pair_count / 2].client2 = client;
             pairs[pair_count / 2].idPair = pair_count / 2;

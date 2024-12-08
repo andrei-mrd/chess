@@ -4,80 +4,13 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <arpa/inet.h>
-#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <sys/time.h>    // Pentru struct timeval
-
+#include <stdbool.h>
 
 #define PORT 50000
 #define BUFFER_SIZE 1024
-
-typedef struct {
-    int client_socket;
-    int write_pipe;
-} PlayerData;
-
-typedef struct {
-    int client1;
-    int client2;
-    int player1_pipe[2];
-    int player2_pipe[2];
-    pthread_t player1_thread;
-    pthread_t player2_thread;
-    pthread_t admin_thread;
-} GamePair;
-
-void *handle_player(void *arg);
-void *admin_pair(void *arg);
-int init_server();
-
-int main() {
-    int sd = init_server();
-    struct sockaddr_in from;
-    socklen_t length = sizeof(from);
-
-    printf("[server] Așteptăm clienți la portul %d...\n", PORT);
-
-    while (1) {
-        int client1 = accept(sd, (struct sockaddr *)&from, &length);
-        if (client1 < 0) {
-            perror("[server] Eroare la accept pentru client1.");
-            continue;
-        }
-
-        int client2 = accept(sd, (struct sockaddr *)&from, &length);
-        if (client2 < 0) {
-            perror("[server] Eroare la accept pentru client2.");
-            close(client1);
-            continue;
-        }
-
-        printf("[server] client1 = %d și client2 = %d s-au conectat.\n", client1, client2);
-
-        GamePair *pair = (GamePair *)malloc(sizeof(GamePair));
-        pair->client1 = client1;
-        pair->client2 = client2;
-
-        if (pipe(pair->player1_pipe) == -1 || pipe(pair->player2_pipe) == -1) {
-            perror("[server] Eroare la crearea pipe-urilor.");
-            close(client1);
-            close(client2);
-            free(pair);
-            continue;
-        }
-
-        pthread_create(&pair->player1_thread, NULL, handle_player, 
-                       &(PlayerData){client1, pair->player1_pipe[1]});
-        pthread_create(&pair->player2_thread, NULL, handle_player, 
-                       &(PlayerData){client2, pair->player2_pipe[1]});
-        pthread_create(&pair->admin_thread, NULL, admin_pair, pair);
-    }
-
-    close(sd);
-    return 0;
-}
 
 int init_server() {
     int sd;
@@ -108,79 +41,90 @@ int init_server() {
     return sd;
 }
 
-void *handle_player(void *arg) {
-    PlayerData *data = (PlayerData *)arg;
-    int client_socket = data->client_socket;
-    int write_pipe = data->write_pipe;
-    char buffer[BUFFER_SIZE];
+void handle_game(int client1, int client2) {
+    int player1_pipe[2], player2_pipe[2];
+    pipe(player1_pipe);
+    pipe(player2_pipe);
 
-    while (1) {
-        struct timeval timeout;
-        timeout.tv_sec = 10;  // Timeout de 10 secunde
-        timeout.tv_usec = 0;
+    // Trimite culorile către clienți
+    const char *color1 = "alb";
+    const char *color2 = "negru";
+    send(client1, color1, strlen(color1) + 1, 0);  // Trimite "alb" la clientul 1
+    send(client2, color2, strlen(color2) + 1, 0);  // Trimite "negru" la clientul 2
+    printf("[server] Culorile au fost trimise: alb -> client1, negru -> client2.\n");
 
-        setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-
-        memset(buffer, 0, BUFFER_SIZE);
-        int bytes_received = recv(client_socket, buffer, BUFFER_SIZE, 0);
-        if (bytes_received <= 0) {
-            printf("[server] Client %d s-a deconectat.\n", client_socket);
-            break;
-        }
-        write(write_pipe, buffer, bytes_received);
-    }
-
-    close(client_socket);
-    return NULL;
-}
-
-void *admin_pair(void *arg) {
-    GamePair *pair = (GamePair *)arg;
-    char color1[] = "alb";
-    char color2[] = "negru";
     char buffer[BUFFER_SIZE];
     int result;
 
-    // Trimite culorile către jucători
-    send(pair->client1, color1, strlen(color1) + 1, 0);
-    send(pair->client2, color2, strlen(color2) + 1, 0);
-    printf("[admin] Culorile au fost trimise.\n");
+    pid_t id = fork();
+
+    if(id < 0) {
+        //eroare creere proces
+        perror("Eroare la fork()");
+        exit(1);
+    }else if(id != 0) {
+        //clientul 1
+        memset(buffer, 0, BUFFER_SIZE);
+        result = recv(client1, buffer, BUFFER_SIZE, 0);
+        if(result < 0) {
+            perror("Eroare primire mesaj de la client1 \n");
+            exit(0);
+        }
+        buffer[result] = '\n';
+        printf("Mesajul primit de la client1 este %s\n", buffer);
+        if(write(player1_pipe[1], buffer, BUFFER_SIZE) == -1) {
+            perror("Eroare scriere in player1_pipe\n");
+            exit(0);
+        }
+        sleep(4);
+
+        //o perioada de sleep
+    }else {
+        //clientul2
+        sleep(2);
+        memset(buffer, 0, BUFFER_SIZE);
+        int r = read(player1_pipe[0], buffer, BUFFER_SIZE);
+        if(r < 0) {
+            perror("Eroare la citire din player1_pipe\n");
+            exit(0);
+        }
+        buffer[r] = '\0';
+        if(send(client2, buffer, BUFFER_SIZE, 0) == -1) {
+            perror("Eroare transmitere mutare de la client1 la client2\n");
+            exit(0);
+        }
+        memset(buffer, 0, BUFFER_SIZE);
+        
+    }
+}
+
+int main() {
+    int sd = init_server();
+    struct sockaddr_in from;
+    socklen_t length = sizeof(from);
+
+    printf("[server] Așteptăm clienți la portul %d...\n", PORT);
 
     while (1) {
-        // Ascultă mesajele de la jucătorul 1
-        memset(buffer, 0, BUFFER_SIZE);
-        result = read(pair->player1_pipe[0], buffer, BUFFER_SIZE);
-
-        if (result > 0) {
-            if (send(pair->client2, buffer, result, 0) <= 0) {
-                printf("[admin] Eroare la trimiterea către client2.\n");
-                break;
-            }
-        } else if (result == 0) {
-            printf("[admin] Jucătorul 1 s-a deconectat.\n");
-            break;
+        int client1 = accept(sd, (struct sockaddr *)&from, &length);
+        if (client1 < 0) {
+            perror("[server] Eroare la accept pentru client1.");
+            continue;
         }
 
-        // Ascultă mesajele de la jucătorul 2
-        memset(buffer, 0, BUFFER_SIZE);
-        result = read(pair->player2_pipe[0], buffer, BUFFER_SIZE);
-
-        if (result > 0) {
-            if (send(pair->client1, buffer, result, 0) <= 0) {
-                printf("[admin] Eroare la trimiterea către client1.\n");
-                break;
-            }
-        } else if (result == 0) {
-            printf("[admin] Jucătorul 2 s-a deconectat.\n");
-            break;
+        int client2 = accept(sd, (struct sockaddr *)&from, &length);
+        if (client2 < 0) {
+            perror("[server] Eroare la accept pentru client2.");
+            close(client1);
+            continue;
         }
+
+        printf("[server] client1 = %d și client2 = %d s-au conectat.\n", client1, client2);
+
+        // Începe un joc între cei doi clienți
+        handle_game(client1, client2);
     }
 
-    // Curățare resurse
-    close(pair->player1_pipe[0]);
-    close(pair->player1_pipe[1]);
-    close(pair->player2_pipe[0]);
-    close(pair->player2_pipe[1]);
-    free(pair);
-    return NULL;
+    close(sd);
+    return 0;
 }

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <stdbool.h>
 
 #define PORT 50000
 #define BUFFER_SIZE 1024
@@ -42,43 +43,53 @@ int main() {
     printf("Culoarea ta este: %s\n", buffer);
 
     // Așteaptă mesaje de la server și trimite-le înapoi
+    bool esteAlb = (buffer[0] == 'A');
     while (1) {
-        if(buffer[0] == 'a') {
-            // Trimite mesajul înapoi la server
+        if (esteAlb) {
+            // Trimite mutare
             memset(buffer, 0, BUFFER_SIZE);
+            printf("Introdu mutarea ta: ");
             fgets(buffer, BUFFER_SIZE, stdin);
             result = send(client_socket, buffer, strlen(buffer), 0);
             if (result <= 0) {
-                printf("Eroare la trimiterea mesajului către server.\n");
+                printf("Eroare la trimiterea mutării.\n");
                 break;
             }
-            memset(buffer, 0, BUFFER_SIZE);
-            result = recv(client_socket, buffer, BUFFER_SIZE, 0);
-            if (result <= 0) {
-                printf("Serverul s-a deconectat sau a apărut o eroare.\n");
-                break;
-            }
-            buffer[result] = '\0';
-            printf("Mesaj de la server: %s\n", buffer);
-        }else if(buffer[0] == 'n') {
-            memset(buffer, 0, BUFFER_SIZE);
-            result = recv(client_socket, buffer, BUFFER_SIZE, 0);
-            if (result <= 0) {
-                printf("Serverul s-a deconectat sau a apărut o eroare.\n");
-                break;
-            }
-            buffer[result] = '\0';
-            printf("Mesaj de la server: %s\n", buffer);
+            printf("Mutarea ta a fost trimisă.\n");
 
+            // Așteaptă răspuns
             memset(buffer, 0, BUFFER_SIZE);
+            result = recv(client_socket, buffer, BUFFER_SIZE, 0);
+            if (result <= 0) {
+                printf("Eroare la primirea răspunsului.\n");
+                break;
+            }
+            printf("Răspuns de la server: %s\n", buffer);
+        } else {
+            // Așteaptă mutare de la clientul 1
+            memset(buffer, 0, BUFFER_SIZE);
+            result = recv(client_socket, buffer, BUFFER_SIZE, 0);
+            if (result <= 0) {
+                printf("Eroare la primirea mutării.\n");
+                break;
+            }
+            buffer[result] = '\0';
+            printf("Mutare primită: %s\n", buffer);
+
+            // Trimite răspunsul
+            memset(buffer, 0, BUFFER_SIZE);
+            printf("Introdu răspunsul: ");
             fgets(buffer, BUFFER_SIZE, stdin);
             result = send(client_socket, buffer, strlen(buffer), 0);
             if (result <= 0) {
-                printf("Eroare la trimiterea mesajului către server.\n");
+                printf("Eroare la trimiterea răspunsului.\n");
                 break;
             }
+            printf("Mutarea ta a fost trimisă.\n");
         }
     }
+
+
 
     close(client_socket);
     return 0;

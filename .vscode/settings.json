@@ -8,6 +8,7 @@
         "interfata_grafica.h": "c",
         "stdlib.h": "c",
         "types.h": "c",
-        "chess.h": "c"
+        "chess.h": "c",
+        "sdl_image.h": "c"
     }
 }
