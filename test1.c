@@ -1,100 +1,96 @@
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <arpa/inet.h>
+#include <stdbool.h>
 
-#define MAX_MESSAGE_LENGTH 100
-
-typedef struct {
-    pthread_mutex_t mutex;
-    pthread_cond_t cond_sender;
-    pthread_cond_t cond_receiver;
-    char message[MAX_MESSAGE_LENGTH];
-    int turn; // 0 - Thread 1 trimite, 1 - Thread 2 trimite
-} shared_data;
-
-void *thread_1(void *arg) {
-    shared_data *data = (shared_data *)arg;
-
-    for (int i = 0; i < 5; i++) {
-        pthread_mutex_lock(&data->mutex);
-
-        // Așteaptă să fie rândul său să trimită
-        while (data->turn != 0) {
-            pthread_cond_wait(&data->cond_sender, &data->mutex);
-        }
-
-        // Trimite mesajul
-        snprintf(data->message, MAX_MESSAGE_LENGTH, "Hello from thread 1 (%d)", i + 1);
-        printf("[Thread 1] Sent: %s\n", data->message);
-
-        // Schimbă rândul
-        data->turn = 1;
-        pthread_cond_signal(&data->cond_receiver);
-
-        // Așteaptă să primească mesajul de la Thread 2
-        while (data->turn != 0) {
-            pthread_cond_wait(&data->cond_sender, &data->mutex);
-        }
-
-        printf("[Thread 1] Received: %s\n", data->message);
-
-        pthread_mutex_unlock(&data->mutex);
-    }
-
-    return NULL;
-}
-
-void *thread_2(void *arg) {
-    shared_data *data = (shared_data *)arg;
-
-    for (int i = 0; i < 5; i++) {
-        pthread_mutex_lock(&data->mutex);
-
-        // Așteaptă mesajul de la Thread 1
-        while (data->turn != 1) {
-            pthread_cond_wait(&data->cond_receiver, &data->mutex);
-        }
-
-        printf("[Thread 2] Received: %s\n", data->message);
-
-        // Trimite răspunsul
-        snprintf(data->message, MAX_MESSAGE_LENGTH, "Hello from thread 2 (%d)", i + 1);
-        printf("[Thread 2] Sent: %s\n", data->message);
-
-        // Schimbă rândul
-        data->turn = 0;
-        pthread_cond_signal(&data->cond_sender);
-
-        pthread_mutex_unlock(&data->mutex);
-    }
-
-    return NULL;
-}
+#define PORT 50000
+#define BUFFER_SIZE 1024
 
 int main() {
-    pthread_t t1, t2;
-    shared_data data;
+    int client_socket;
+    struct sockaddr_in server_addr;
+    char buffer[BUFFER_SIZE];
+    int result;
 
-    // Inițializare date partajate
-    pthread_mutex_init(&data.mutex, NULL);
-    pthread_cond_init(&data.cond_sender, NULL);
-    pthread_cond_init(&data.cond_receiver, NULL);
-    data.turn = 0; // Thread-ul 1 începe
+    // Creare socket
+    if ((client_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("Eroare la socket().");
+        exit(EXIT_FAILURE);
+    }
 
-    // Creare thread-uri
-    pthread_create(&t1, NULL, thread_1, &data);
-    pthread_create(&t2, NULL, thread_2, &data);
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  // Conectează-te la orice adresă IP
 
-    // Așteaptă finalizarea thread-urilor
-    pthread_join(t1, NULL);
-    pthread_join(t2, NULL);
+    // Conectare la server
+    if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
+        perror("Eroare la connect().");
+        close(client_socket);
+        exit(EXIT_FAILURE);
+    }
 
-    // Curățare resurse
-    pthread_mutex_destroy(&data.mutex);
-    pthread_cond_destroy(&data.cond_sender);
-    pthread_cond_destroy(&data.cond_receiver);
+    // Primește culoarea (alb sau negru)
+    memset(buffer, 0, BUFFER_SIZE);
+    result = recv(client_socket, buffer, BUFFER_SIZE, 0);
+    if (result <= 0) {
+        printf("Eroare la primirea culorii.\n");
+        close(client_socket);
+        exit(EXIT_FAILURE);
+    }
 
+    printf("Culoarea ta este: %s\n", buffer);
+
+    // Așteaptă mesaje de la server și trimite-le înapoi
+    bool esteAlb = (buffer[0] == 'A');
+    while (1) {
+        if (esteAlb) {
+            // Trimite mutare
+            memset(buffer, 0, BUFFER_SIZE);
+            printf("Introdu mutarea ta: ");
+            fgets(buffer, BUFFER_SIZE, stdin);
+            result = send(client_socket, buffer, strlen(buffer), 0);
+            if (result <= 0) {
+                printf("Eroare la trimiterea mutării.\n");
+                break;
+            }
+            printf("Mutarea ta a fost trimisă.\n");
+
+            // Așteaptă răspuns
+            memset(buffer, 0, BUFFER_SIZE);
+            result = recv(client_socket, buffer, BUFFER_SIZE, 0);
+            if (result <= 0) {
+                printf("Eroare la primirea răspunsului.\n");
+                break;
+            }
+            printf("Răspuns de la server: %s\n", buffer);
+        } else {
+            // Așteaptă mutare de la clientul 1
+            memset(buffer, 0, BUFFER_SIZE);
+            result = recv(client_socket, buffer, BUFFER_SIZE, 0);
+            if (result <= 0) {
+                printf("Eroare la primirea mutării.\n");
+                break;
+            }
+            buffer[result] = '\0';
+            printf("Mutare primită: %s\n", buffer);
+
+            // Trimite răspunsul
+            memset(buffer, 0, BUFFER_SIZE);
+            printf("Introdu răspunsul: ");
+            fgets(buffer, BUFFER_SIZE, stdin);
+            result = send(client_socket, buffer, strlen(buffer), 0);
+            if (result <= 0) {
+                printf("Eroare la trimiterea răspunsului.\n");
+                break;
+            }
+            printf("Mutarea ta a fost trimisă.\n");
+        }
+    }
+
+
+
+    close(client_socket);
     return 0;
 }
