@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include/SFML"
+            ],
+            "compilerPath": "/usr/bin/g++",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "path": [
+                    "/usr/include",
+                    "/usr/include/SFML"
+                ]
+            },
+            "libPath": [
+                "/usr/lib/x86_64-linux-gnu"  // Calea către bibliotecile SFML
+            ]
+        }
+    ],
+    "version": 4
+}

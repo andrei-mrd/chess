@@ -8,7 +8,6 @@
 
 void draw_board(SDL_Renderer *renderer);
 void draw_piece(SDL_Renderer *renderer, SDL_Texture *piece, int row, int col);
-void display_board(SDL_Renderer *renderer, int**  table, SDL_Texture *textures[]);
-void play_game(SDL_Renderer *renderer, int**  table, SDL_Texture *textures[], char culoare, int sd);
+void display_board(SDL_Renderer *renderer ,SDL_Texture *textures[]);
 
 #endif

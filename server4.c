@@ -8,7 +8,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "chess.h"
 #include <semaphore.h>
 
 
@@ -99,7 +98,6 @@ static void *handle_pair(void *a) {
     ClientPair *pair = (ClientPair *)a;
     int client1 = pair->client1;
     int client2 = pair->client2;
-    int **board = create_chess_board();
     char buffer[BUFFER_SIZE];
 
     printf("[pair %d] Pereche creată: client1=%d, client2=%d\n", pair->idPair, client1, client2);
@@ -166,5 +164,4 @@ static void *handle_pair(void *a) {
 
     close(client1);
     close(client2);
-    free_chess_board(board);
 }

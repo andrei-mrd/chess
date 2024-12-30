@@ -4,11 +4,57 @@
 #include <string.h>
 #include "chess.h"
 
-bool selectare_valida(int** table, int selected_x, int selected_y, char culoare){
+bool selectare_valida_1(int** table, int selected_x, int selected_y, char culoare){
     if(table[selected_y][selected_x] == 7 || table[selected_y][selected_x] == 8 || 
         (table[selected_y][selected_x] >= 1 && table[selected_y][selected_x] <= 6 && culoare == 'A') || 
         (table[selected_y][selected_x] >= -6 && table[selected_y][selected_x] <= -1 && culoare == 'N')) {
             return false;
+    }
+    return true;
+}
+
+bool selectare_valida_2(int** table, int from_x, int from_y, int to_x, int to_y, char culoare) {
+    char p = identifica_piesa(table, from_x, from_y);
+    switch (p)
+    {
+    case 'P':
+        if(validare_miscare_pion(table, from_x, from_y, to_x, to_y, culoare, -1, -1,-1, -1) == false) {
+            return false;
+        }
+        break;
+    
+    case 'T':
+        if(validare_miscare_tura(table, from_x, from_y, to_x, to_y, culoare) == false) {
+            return false;
+        }
+        break;
+
+    case 'C':
+        if(validare_miscare_cal(table, from_x, from_y, to_x, to_y, culoare) == false) {
+            return false;
+        }
+        break;
+
+    case 'N':
+        if(validare_miscare_nebun(table, from_x, from_y, to_x, to_y, culoare) == false) {
+            return false;
+        }
+        break;
+
+    case 'Q':
+        if(validare_miscare_regina(table, from_x, from_y, to_x, to_y, culoare) == false) {
+            return false;
+        }
+        break;
+
+    case 'K':
+        if(validare_miscare_rege(table, from_x, from_y, to_x, to_y, culoare) == false) {
+            return false;
+        }
+        break;
+    
+    default:
+        break;
     }
     return true;
 }
@@ -114,7 +160,7 @@ int** create_chess_board() {
     return board;
 }
 
-void update_board(int** table, int from_X, int from_Y, int to_X, int to_Y) {
+void update_board_memory(int** table, int from_X, int from_Y, int to_X, int to_Y) {
     if(from_X % 2 == from_Y % 2) {
         //este loc alb de unde pleaca
         int aux = 7;
