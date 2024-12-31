@@ -249,6 +249,12 @@ int main() {
 
     while (running) {
         if (esteAlb) {
+            
+            if(este_in_sah(board, 'A') == true && este_sah_mat(board, 'A') == true) {
+                send(client_socket, "mat", 3, 0);
+                break;
+            }
+
             printf("Introdu mutarea\n");
             from_x = from_y = to_x = to_y = -1;
             int selectie = 0;
@@ -285,6 +291,11 @@ int main() {
                                 continue;
                             }else {
                                 selectie++;
+                                for(int i = 0; i<8; i++) {
+                                    if(board[0][i] == -1) {
+                                        board[0][i] = -5;
+                                    }
+                                }
                             }
                         }
                     }
@@ -323,10 +334,15 @@ int main() {
             }
             printf("Răspuns de la server: %s\n", buffer);
 
+            if(strcmp(buffer, "mat") == 0) {
+                break;
+            }
+
             sscanf(buffer, "%d %d %d %d", &from_x, &from_y, &to_x, &to_y);
 
             update_board_memory(board, from_x, from_y, to_x, to_y);
             show_board(board, renderer, textures);
+
 
         } else {
             // Așteaptă mutare de la clientul alb
@@ -338,12 +354,22 @@ int main() {
                 break;
             }
             buffer[result] = '\0';
+
+            if(strcmp(buffer, "mat") == 0) {
+                break;
+            }
+
             printf("Mutare primită: %s\n", buffer);
 
             sscanf(buffer,"%d %d %d %d", &from_x, &from_y, &to_x, &to_y);
 
             update_board_memory(board, from_x, from_y, to_x, to_y);
             show_board(board, renderer, textures);
+
+            if(este_in_sah(board, 'N') == true && este_sah_mat(board, 'N') == true) {
+                send(client_socket, "mat", 3, 0);
+                break;
+            }
 
             from_x = from_y = to_x = to_y = -1;
             int selectie = 0;
@@ -379,6 +405,11 @@ int main() {
                                 continue;
                             }else {
                                 selectie++;
+                                for(int i = 0; i<8; i++) {
+                                    if(board[7][i] == 1) {
+                                        board[0][i] = 5;
+                                    }
+                                }
                             }
                         }
                     }

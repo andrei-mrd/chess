@@ -15,6 +15,7 @@ bool validare_miscare_cal(int** table, int current_X, int current_Y, int new_X, 
 bool validare_miscare_regina(int** table, int current_X, int current_Y, int new_X, int new_Y, char culoare);
 bool validare_miscare_rege(int** table, int current_X, int current_Y, int new_X, int new_Y, char culoare);
 bool este_in_sah(int** table, char culoare);
-bool intra_in_sah(int** table, char piesa, char culoare, int from_X, int from_Y, int to_X, int to_Y, bool is_enPassant, int enp_old_X, int enp_old_Y, int enp_new_X, int enp_new_Y);
+bool intra_in_sah(int** table, int from_x, int from_y, int to_x, int to_y, char culoare);
+bool este_sah_mat(int ** table, char culoare);
 
 #endif

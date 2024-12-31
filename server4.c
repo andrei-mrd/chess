@@ -139,6 +139,10 @@ static void *handle_pair(void *a) {
         buffer[bytesRead] = '\0';
         printf("info : %s\n", buffer);
 
+        if(strcmp(buffer, "mat") == true) {
+            printf("client[%d](Negru) a castigat\n", client2);
+        }
+
         //trimite info la client2
         if(send(client2, buffer, BUFFER_SIZE, 0) == -1) {
             perror("eroare la trimitere info de la server la client2\n");
@@ -154,6 +158,10 @@ static void *handle_pair(void *a) {
         }
         buffer[bytesRead] = '\0';
         printf("info1 : %s\n", buffer);
+
+        if(strcmp(buffer, "mat") == 0) {
+            printf("client[%d](ALB) a castigat\n", client1);
+        }
 
         //trimite info1 la client1
         if(send(client1, buffer, BUFFER_SIZE, 0) == -1) {
