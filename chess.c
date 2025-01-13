@@ -149,6 +149,7 @@ int** create_chess_board() {
         }
     }
 
+    /*
     int defaultTable[8][8] = {
         { 4,  3,  2,  5,  6,  2,  3,  4}, // Linie 0: Piese majore negru
         { 1,  1,  1,  1,  1,  1,  1,  1}, // Linie 1: Pioni negru
@@ -159,6 +160,17 @@ int** create_chess_board() {
         {-1, -1, -1, -1, -1, -1, -1, -1}, // Linie 6: Pioni alb
         {-4, -3,  -2, -5, -6, -2, -3, -4}  // Linie 7: Piese majore alb
     };
+    */
+   int defaultTable[8][8] = {
+        { 7,  8,  7,  8,  6,  8,  7,  8}, // Linie 0: Piese majore negru
+        { 8,  7,  8,  7,  8,  7,  8,  7}, // Linie 1: Pioni negru
+        { 7,  8,  7,  8,  7,  8,  7,  8}, // Linii goale
+        { 8,  7,  8,  7,  8,  7,  8,  7},
+        { 7,  8,  7,  8,  7,  8,  7,  8},
+        { 8,  7,  8,  7,  8,  7,  8,  7},
+        { 7,  8,  7,  8,  7,  8,  7,  8}, // Linie 6: Pioni alb
+        { 8,  7,  8,  7,  -6,  7,  8,  7}  // Linie 7: Piese majore alb
+   };
 
     for (int i = 0; i < 8; i++) {
         memcpy(board[i], defaultTable[i], 8 * sizeof(int));
@@ -537,11 +549,11 @@ bool validare_miscare_rege(int** table, int current_X, int current_Y, int new_X,
     //cele 4 de pe diagonala
     if((abs(new_X - current_X) == 1 && abs(new_Y - current_Y) == 1) ) {
         if(culoare == 'A') {
-            if((table[new_Y][new_X] < 6 && table[new_Y][new_X] > 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
+            if((table[new_Y][new_X] < 7 && table[new_Y][new_X] > 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
                 return true;
             }
         }else if(culoare == 'N') {
-            if((table[new_Y][new_X] > -6 && table[new_Y][new_X] < 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
+            if((table[new_Y][new_X] > -7 && table[new_Y][new_X] < 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
                 return true;
             }
         }
@@ -550,11 +562,11 @@ bool validare_miscare_rege(int** table, int current_X, int current_Y, int new_X,
     //cele 2 de pe verticala
     if((abs(new_X - current_X) == 0 && abs(new_Y - current_Y) == 1)) {
         if(culoare == 'A') {
-            if((table[new_Y][new_X] < 6 && table[new_Y][new_X] > 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
+            if((table[new_Y][new_X] < 7 && table[new_Y][new_X] > 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
                 return true;
             }
         }else if(culoare == 'N') {
-            if((table[new_Y][new_X] > -6 && table[new_Y][new_X] < 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
+            if((table[new_Y][new_X] > -7 && table[new_Y][new_X] < 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
                 return true;
             }
         }
@@ -563,11 +575,11 @@ bool validare_miscare_rege(int** table, int current_X, int current_Y, int new_X,
     //cele 2 de pe orizontala
     if((abs(new_X - current_X) == 1 && abs(new_Y - current_Y) == 0) ) {
         if(culoare == 'A') {
-            if((table[new_Y][new_X] < 6 && table[new_Y][new_X] > 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
+            if((table[new_Y][new_X] < 7 && table[new_Y][new_X] > 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
                 return true;
             }
         }else if(culoare == 'N') {
-            if((table[new_Y][new_X] > -6 && table[new_Y][new_X] < 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
+            if((table[new_Y][new_X] > -7 && table[new_Y][new_X] < 0) || (table[new_Y][new_X] == 7 || table[new_Y][new_X] == 8)) {
                 return true;
             }
         }
@@ -616,6 +628,11 @@ bool este_in_sah(int ** table, char culoare) {
                     printf("Sah de la regina neagra");
                     return true;
                 }  
+
+                if(table[i][j] == 6 && validare_miscare_rege(table, j, i, coordonate_x, coordonate_y, 'N')) {
+                    printf("Sah de la rege negru");
+                    return true;
+                }
             }
         }
     }else if(culoare == 'N') {
@@ -654,6 +671,11 @@ bool este_in_sah(int ** table, char culoare) {
 
                 if(table[i][j] == -5 && validare_miscare_regina(table, j, i, coordonate_x, coordonate_y, 'A')) {
                     printf("Sah de la regina alba");
+                    return true;
+                }
+
+                if(table[i][j] == -6 && validare_miscare_rege(table, j, i, coordonate_x, coordonate_y, 'A')) {
+                    printf("Sah de la rege alb");
                     return true;
                 }  
             }

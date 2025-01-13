@@ -137,7 +137,16 @@ void show_board(int **board, SDL_Renderer *renderer, SDL_Texture *textures[]) {
     return;
 }
 
-int main() {
+int main(int argc, char * argv[]) {
+
+    if(argc < 3) {
+        fprintf(stderr, "Utilizare: %s <IP_SERVER> <PORT>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    const char *ip_server = argv[1];
+    int port = atoi(argv[2]);
+
     int client_socket;
     struct sockaddr_in server_addr;
     char buffer[BUFFER_SIZE];
@@ -150,7 +159,11 @@ int main() {
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    if(inet_pton(AF_INET, ip_server, &server_addr.sin_addr) <= 0) {
+        perror("Eroare la conversia adresei IP.");
+        close(client_socket);
+        exit(EXIT_FAILURE);
+    }
 
     // Conectare la server
     if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
@@ -255,6 +268,11 @@ int main() {
                 break;
             }
 
+            if(este_in_sah(board, 'A') == false && este_sah_mat(board, 'A') == true) {
+                send(client_socket, "egal", 4, 0);
+                break;
+            }
+
             printf("Introdu mutarea\n");
             from_x = from_y = to_x = to_y = -1;
             int selectie = 0;
@@ -289,13 +307,12 @@ int main() {
                                 printf("Selectie invalida pt a 2 mutare\n");
                                 selectie--;
                                 continue;
-                            }else {
+                            }else if(selectare_valida_2(board, from_x, from_y, to_x, to_y, 'A') == true && 
+                                    board[from_y][from_x] == -1 && to_y == 0) {
+                                        board[from_y][from_x] = -5;
+                                        selectie++;
+                            } else if(selectare_valida_2(board, from_x, from_y, to_x, to_y, 'A') == true) {
                                 selectie++;
-                                for(int i = 0; i<8; i++) {
-                                    if(board[0][i] == -1) {
-                                        board[0][i] = -5;
-                                    }
-                                }
                             }
                         }
                     }
@@ -311,7 +328,16 @@ int main() {
 
             update_board_memory(board, from_x, from_y, to_x, to_y);
 
+            for(int i = 0; i < 8; i++) {
+                if(board[7][i] == 1) {
+                    printf("promovare_regina\n");
+                    board[7][i] = 5;
+                }
+            }
+
+
             show_board(board, renderer, textures);
+        
 
             // Trimitem mutarea
             memset(buffer, 0, BUFFER_SIZE);
@@ -338,9 +364,21 @@ int main() {
                 break;
             }
 
+            if(strcmp(buffer, "egal") == 0) {
+                break;
+            }
+
             sscanf(buffer, "%d %d %d %d", &from_x, &from_y, &to_x, &to_y);
 
             update_board_memory(board, from_x, from_y, to_x, to_y);
+
+            for(int i = 0; i < 8; i++) {
+                if(board[7][i] == 1) {
+                    printf("promovare_regina\n");
+                    board[7][i] = 5;
+                }
+            }
+
             show_board(board, renderer, textures);
 
 
@@ -359,15 +397,30 @@ int main() {
                 break;
             }
 
+            if(strcmp(buffer, "egal") == 0) {
+                break;
+            }
+
             printf("Mutare primită: %s\n", buffer);
 
             sscanf(buffer,"%d %d %d %d", &from_x, &from_y, &to_x, &to_y);
 
             update_board_memory(board, from_x, from_y, to_x, to_y);
+
+            for(int i = 0; i < 8; i++) {
+                if(board[0][i] == -1) {
+                    printf("promovare_regina\n");
+                    board[0][i] = -5;
+                }
+            }
+
             show_board(board, renderer, textures);
 
             if(este_in_sah(board, 'N') == true && este_sah_mat(board, 'N') == true) {
                 send(client_socket, "mat", 3, 0);
+                break;
+            } else if(este_in_sah(board, 'N') == false && este_in_sah(board, 'N') == true) {
+                send(client_socket, "egal", 4, 0);
                 break;
             }
 
@@ -403,13 +456,12 @@ int main() {
                                 printf("Selectie invalida pt a 2 a mutare\n");
                                 selectie--;
                                 continue;
-                            }else {
+                            }else if(selectare_valida_2(board, from_x, from_y, to_x, to_y, 'N') == true && 
+                                    board[from_y][from_x] == 1 && to_y == 7) {
+                                        board[from_y][from_x] = 5;
+                                        selectie++;
+                            }else if(selectare_valida_2(board, from_x, from_y, to_x, to_y, 'N') == true) {
                                 selectie++;
-                                for(int i = 0; i<8; i++) {
-                                    if(board[7][i] == 1) {
-                                        board[0][i] = 5;
-                                    }
-                                }
                             }
                         }
                     }
@@ -424,6 +476,13 @@ int main() {
             }
 
             update_board_memory(board, from_x, from_y, to_x, to_y);
+
+            for(int i = 0; i < 8; i++) {
+                if(board[0][i] == -1) {
+                    printf("promovare_regina\n");
+                    board[0][i] = -5;
+                }
+            }
 
             show_board(board, renderer, textures);
 

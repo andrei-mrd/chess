@@ -141,6 +141,8 @@ static void *handle_pair(void *a) {
 
         if(strcmp(buffer, "mat") == true) {
             printf("client[%d](Negru) a castigat\n", client2);
+        }else if(strcmp(buffer, "egal") == true) {
+            printf("Egal");
         }
 
         //trimite info la client2
@@ -161,6 +163,8 @@ static void *handle_pair(void *a) {
 
         if(strcmp(buffer, "mat") == 0) {
             printf("client[%d](ALB) a castigat\n", client1);
+        }else if(strcmp(buffer, "egal") == true) {
+            printf("Egal");
         }
 
         //trimite info1 la client1
